@@ -4,6 +4,8 @@ resource "azurerm_container_registry" "tiulanches_acr" {
   location            = azurerm_resource_group.tiulanches_rg.location
   sku                 = "Basic"
   admin_enabled       = false
+
+  depends_on = [azurerm_resource_group.tiulanches_rg]    
 }
 
 resource "azurerm_kubernetes_cluster" "tiulanches_aks" {
@@ -33,6 +35,8 @@ resource "azurerm_kubernetes_cluster" "tiulanches_aks" {
     network_plugin    = "kubenet"
     load_balancer_sku = "standard"
   }
+
+  depends_on = [azurerm_resource_group.tiulanches_rg]    
 }
 
 resource "azurerm_role_assignment" "aks_to_acr" {
@@ -40,11 +44,15 @@ resource "azurerm_role_assignment" "aks_to_acr" {
   role_definition_name             = "AcrPull"
   scope                            = azurerm_container_registry.tiulanches_acr.id
   skip_service_principal_aad_check = true
+
+  depends_on = [azurerm_resource_group.tiulanches_rg]    
 }
 
 resource "azurerm_role_assignment" "aks_to_rg" {
   scope                = azurerm_resource_group.tiulanches_rg.id
   role_definition_name = "Network Contributor"
   principal_id         = azurerm_kubernetes_cluster.tiulanches_aks.identity[0].principal_id
+  
+  depends_on = [azurerm_resource_group.tiulanches_rg]    
 }
 
