@@ -44,7 +44,7 @@ jobs:
       working-directory: ${{ env.ROOT_PATH }}
 
   terraform_apply:
-    name: 'Terraform appy'
+    name: 'Terraform apply'
     runs-on: ubuntu-latest
     needs: [ terraform_plan ]
     environment: dev
