@@ -25,6 +25,11 @@ resource "azurerm_linux_function_app" "tiulanches_auth_function" {
   storage_account_name       = azurerm_storage_account.tiulanches_sa.name
   storage_account_access_key = azurerm_storage_account.tiulanches_sa.primary_access_key
   service_plan_id            = azurerm_service_plan.tiulanches_sp.id    
+  app_settings = {
+    DATASOURCE_PASSWORD = var.db_password
+    DATASOURCE_URL = var.db_connection
+    DATASOURCE_USERNAME = var.db_username
+  }
 
   site_config {
     application_stack {

@@ -10,6 +10,9 @@ env:
   ARM_CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
   ARM_TENANT_ID: ${{secrets.TENANT_ID}}
   ARM_SUBSCRIPTION_ID: ${{secrets.SUBSCRIPTION_ID}}
+  DATASOURCE_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}
+  DATASOURCE_URL: ${{secrets.DATASOURCE_URL}}
+  DATASOURCE_USERNAME: ${{secrets.DATASOURCE_USERNAME}}  
   ROOT_PATH: '${{ github.workspace }}/src/terraform/'
 
 jobs:
@@ -40,7 +43,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan
+      run: terraform plan -var db_username=$DATASOURCE_USERNAME -var db_password=$DATASOURCE_PASSWORD -var db_connection=$DATASOURCE_URL
       working-directory: ${{ env.ROOT_PATH }}
 
   terraform_apply:
@@ -72,5 +75,5 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform apply
-      run: terraform apply --auto-approve
+      run: terraform apply -var db_username=$DATASOURCE_USERNAME -var db_password=$DATASOURCE_PASSWORD -var db_connection=$DATASOURCE_URL --auto-approve
       working-directory: ${{ env.ROOT_PATH }}      
