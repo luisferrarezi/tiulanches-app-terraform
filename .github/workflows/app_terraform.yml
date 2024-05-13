@@ -1,7 +1,7 @@
 name: 'App Infra deploy to azure'
 
 on:
-  push:
+  pull_request:
     branches: [ "main" ]  
 
 env:
