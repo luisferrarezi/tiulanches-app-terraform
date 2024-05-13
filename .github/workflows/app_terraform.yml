@@ -77,11 +77,11 @@ jobs:
     - name: Azure Login
       uses: Azure/login@v2.0.0
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ AZURE_CREDENTIALS }}
 
     - name: Azure Kubernetes set context
       uses: Azure/aks-set-context@v3
       with:        
-        resource-group: ${{ secrets.RESOURSE_GROUP }}
-        cluster-name: ${{ secrets.CLUSTER_NAME }}
-        subscription: ${{ secrets.SUBSCRIPTION }}
+        resource-group: ${{ RESOURSE_GROUP }}
+        cluster-name: ${{ CLUSTER_NAME }}
+        subscription: ${{ SUBSCRIPTION }}
