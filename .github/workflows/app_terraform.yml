@@ -77,11 +77,14 @@ jobs:
     - name: Azure Login
       uses: Azure/login@v2.0.0
       with:
-        creds: $AZURE_CREDENTIALS
+        auth-type: IDENTITY
+        tenant-id: ${{secrets.TENANT_ID}}
+        subscription-id: ${{secrets.SUBSCRIPTION_ID}}
+        enable-AzPSSession: true
 
     - name: Azure Kubernetes set context
       uses: Azure/aks-set-context@v3
       with:        
-        resource-group: $RESOURSE_GROUP
-        cluster-name: $CLUSTER_NAME
-        subscription: $SUBSCRIPTION
+        resource-group: ${{ env.RESOURSE_GROUP }}
+        cluster-name: ${{ env.CLUSTER_NAME }}
+        subscription: ${{ env.SUBSCRIPTION }}
