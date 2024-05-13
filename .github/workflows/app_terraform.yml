@@ -77,7 +77,9 @@ jobs:
     - name: Azure Login
       uses: Azure/login@v2.0.0
       with:
-         creds: ${{ secrets.AZURE_CREDENTIALS }}
+         client-id: ${{ secrets.CLIENT_ID }}
+         tenant-id: ${{ secrets.TENANT_ID }}
+         subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
     - name: Azure Kubernetes set context
       uses: Azure/aks-set-context@v3
