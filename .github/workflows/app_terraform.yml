@@ -12,7 +12,8 @@ env:
   DATASOURCE_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}
   DATASOURCE_URL: ${{secrets.DATASOURCE_URL}}
   DATASOURCE_USERNAME: ${{secrets.DATASOURCE_USERNAME}}  
-  ROOT_PATH: '${{ github.workspace }}/src/terraform/'
+  ROOT_PATH_TERRAFORM: '${{ github.workspace }}/src/terraform/'
+  ROOT_PATH_KUBERNETES: '${{ github.workspace }}/src/kubernetes/'
 
 jobs:
 #  terraform_plan:
@@ -33,11 +34,11 @@ jobs:
 
 #    - name: Terraform Init
 #      run: terraform init
-#      working-directory: ${{ env.ROOT_PATH }}
+#      working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
 
 #    - name: Terraform Plan
 #      run: terraform plan -var db_username=$DATASOURCE_USERNAME -var db_password=$DATASOURCE_PASSWORD -var db_connection=$DATASOURCE_URL
-#      working-directory: ${{ env.ROOT_PATH }}
+#      working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
 
 #  terraform_apply:
 #    name: 'Terraform apply'
@@ -59,11 +60,11 @@ jobs:
 
  #   - name: Terraform Init
  #     run: terraform init
- #     working-directory: ${{ env.ROOT_PATH }}
+ #     working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
 
  #   - name: Terraform apply
  #     run: terraform apply -var db_username=$DATASOURCE_USERNAME -var db_password=$DATASOURCE_PASSWORD -var db_connection=$DATASOURCE_URL --auto-approve
- #     working-directory: ${{ env.ROOT_PATH }}
+ #     working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
 
   deploy_nginx:
     name: 'Deploy Nginx'
@@ -83,28 +84,47 @@ jobs:
       with:        
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Install Helm
-      uses: azure/setup-helm@v4.2.0
-
-    - name: Config kubeconfig
-      uses: azure/use-kubelogin@v1
-      with:
-        kubelogin-version: 'v0.0.25'
-
     - name: Azure Kubernetes set context
       uses: Azure/aks-set-context@v3
       with:        
         resource-group: ${{ secrets.RESOURCE_GROUP }}
         cluster-name: ${{ secrets.CLUSTER_NAME }}
         subscription: ${{ secrets.SUBSCRIPTION }}
-        admin: 'false'
-        use-kubelogin: 'true'
         
     - name: Deploy to Kubernetes cluster
       run: |
-        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml --namespace=ingress-nginx
+        kubectl create namespace ingress-nginx \
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml --namespace=ingress-nginx       
 
-    - name: Executa helm
-      run: |
-        helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
+  deploy_kafka:
+    name: 'Deploy Kafka'
+#    needs: [ deploy_nginx ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+  
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
+
+    - name: Azure Login
+      uses: Azure/login@v2.0.0
+      with:        
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure Kubernetes set context
+      uses: Azure/aks-set-context@v3
+      with:        
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+        subscription: ${{ secrets.SUBSCRIPTION }}        
         
+    - name: Deploy to Kubernetes cluster
+      working-directory: ${{ env.ROOT_PATH_KUBERNETES }}
+      run: |
+        kubectl create namespace kafka \
+        kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka \
+        kubectl apply -f kafka.yaml -n kafka
+
