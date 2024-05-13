@@ -97,17 +97,17 @@ jobs:
         admin: 'false'
         use-kubelogin: 'true'
 
-    - name: Install Helm
-      uses: azure/setup-helm@v4.2.0
-      id: install
+#    - name: Install Helm
+#      uses: azure/setup-helm@v4.2.0
+#      id: install
 
-    - name: Executa helm
-      run: |
-        helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
+#    - name: Executa helm
+#      run: |
+#        helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
         
-#    - name: Deploy to Kubernetes cluster
-#      uses: Azure/k8s-deploy@v4.9
-#      with:
-#        manifests: |
-#          https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml
+    - name: Deploy to Kubernetes cluster
+      uses: Azure/k8s-deploy@v4.9
+      with:
+        manifests: |
+          https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml
           
