@@ -83,6 +83,9 @@ jobs:
       with:        
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Install Helm
+      uses: azure/setup-helm@v4.2.0
+
     - name: Config kubeconfig
       uses: azure/use-kubelogin@v1
       with:
@@ -100,10 +103,6 @@ jobs:
     - name: Deploy to Kubernetes cluster
       run: |
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml --namespace=ingress-nginx
-
-    - name: Install Helm
-      uses: azure/setup-helm@v4.2.0
-      id: install
 
     - name: Executa helm
       run: |
