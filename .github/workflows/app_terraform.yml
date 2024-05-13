@@ -86,6 +86,6 @@ jobs:
     - name: Azure Kubernetes set context
       uses: Azure/aks-set-context@v3
       with:        
-        resource-group: ${{ env.RESOURSE_GROUP }}
-        cluster-name: ${{ env.CLUSTER_NAME }}
-        subscription: ${{ env.SUBSCRIPTION }}
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+        subscription: ${{ secrets.SUBSCRIPTION }}
