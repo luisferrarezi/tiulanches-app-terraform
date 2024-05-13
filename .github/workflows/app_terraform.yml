@@ -64,3 +64,24 @@ jobs:
     - name: Terraform apply
       run: terraform apply -var db_username=$DATASOURCE_USERNAME -var db_password=$DATASOURCE_PASSWORD -var db_connection=$DATASOURCE_URL --auto-approve
       working-directory: ${{ env.ROOT_PATH }}
+
+  deploy_nginx:
+    name: 'Deploy Nginx'
+    needs: [ terraform_apply ]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
+
+    - name: Azure Login
+      uses: Azure/login@v2.0.0
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure Kubernetes set context
+      uses: Azure/aks-set-context@v3
+      with:        
+        resource-group: ${{ secrets.RESOURSE_GROUP }}
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+        subscription: ${{ secrets.SUBSCRIPTION }}
