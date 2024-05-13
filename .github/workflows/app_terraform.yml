@@ -96,35 +96,34 @@ jobs:
         kubectl create namespace ingress-nginx \
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml --namespace=ingress-nginx       
 
-  deploy_kafka:
-    name: 'Deploy Kafka'
+#  deploy_kafka:
+#    name: 'Deploy Kafka'
 #    needs: [ deploy_nginx ]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: read
+#      pages: write
+#      id-token: write
   
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4.1.1
+#    steps:
+#    - name: Checkout
+#      uses: actions/checkout@v4.1.1
 
-    - name: Azure Login
-      uses: Azure/login@v2.0.0
-      with:        
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+#    - name: Azure Login
+#      uses: Azure/login@v2.0.0
+#      with:        
+#        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Azure Kubernetes set context
-      uses: Azure/aks-set-context@v3
-      with:        
-        resource-group: ${{ secrets.RESOURCE_GROUP }}
-        cluster-name: ${{ secrets.CLUSTER_NAME }}
-        subscription: ${{ secrets.SUBSCRIPTION }}        
+#    - name: Azure Kubernetes set context
+#      uses: Azure/aks-set-context@v3
+#      with:        
+#        resource-group: ${{ secrets.RESOURCE_GROUP }}
+#        cluster-name: ${{ secrets.CLUSTER_NAME }}
+#        subscription: ${{ secrets.SUBSCRIPTION }}        
         
-    - name: Deploy to Kubernetes cluster
-      working-directory: ${{ env.ROOT_PATH_KUBERNETES }}
-      run: |
-        kubectl create namespace kafka \
-        kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka \
-        kubectl apply -f kafka.yaml -n kafka
-
+#    - name: Deploy to Kubernetes cluster
+#      working-directory: ${{ env.ROOT_PATH_KUBERNETES }}
+#      run: |
+#        kubectl create namespace kafka \
+#        kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka \
+#        kubectl apply -f kafka.yaml -n kafka
