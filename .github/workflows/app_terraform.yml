@@ -16,59 +16,59 @@ env:
   ROOT_PATH_KUBERNETES: '${{ github.workspace }}/src/kubernetes/'
 
 jobs:
-#  terraform_plan:
-#    name: 'Terraform plan'
-#    runs-on: ubuntu-latest    
-#    defaults:
-#      run:
-#        shell: bash
+  terraform_plan:
+    name: 'Terraform plan'
+    runs-on: ubuntu-latest    
+    defaults:
+      run:
+        shell: bash
 
-#    steps:
-#    - name: Checkout
-#      uses: actions/checkout@v4.1.1
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
    
-#    - name: Setup Terraform
-#      uses: hashicorp/setup-terraform@v1
-#      with:
-#        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-#    - name: Terraform Init
-#      run: terraform init
-#      working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
 
-#    - name: Terraform Plan
-#      run: terraform plan -var db_username=$DATASOURCE_USERNAME -var db_password=$DATASOURCE_PASSWORD -var db_connection=$DATASOURCE_URL
-#      working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
+    - name: Terraform Plan
+      run: terraform plan -var db_username=$DATASOURCE_USERNAME -var db_password=$DATASOURCE_PASSWORD -var db_connection=$DATASOURCE_URL
+      working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
 
-#  terraform_apply:
-#    name: 'Terraform apply'
-#    runs-on: ubuntu-latest
-#    needs: [ terraform_plan ]
-#    environment: dev
-#    defaults:
-#      run:
-#        shell: bash
+  terraform_apply:
+    name: 'Terraform apply'
+    runs-on: ubuntu-latest
+    needs: [ terraform_plan ]
+    environment: dev
+    defaults:
+      run:
+        shell: bash
 
- #   steps:
- #   - name: Checkout
- #     uses: actions/checkout@v4.1.1
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
 
- #   - name: Setup Terraform
- #     uses: hashicorp/setup-terraform@v1
- #     with:
- #       cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
- #   - name: Terraform Init
- #     run: terraform init
- #     working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
 
- #   - name: Terraform apply
- #     run: terraform apply -var db_username=$DATASOURCE_USERNAME -var db_password=$DATASOURCE_PASSWORD -var db_connection=$DATASOURCE_URL --auto-approve
- #     working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
+    - name: Terraform apply
+      run: terraform apply -var db_username=$DATASOURCE_USERNAME -var db_password=$DATASOURCE_PASSWORD -var db_connection=$DATASOURCE_URL --auto-approve
+      working-directory: ${{ env.ROOT_PATH_TERRAFORM }}
 
   deploy_nginx:
     name: 'Deploy Nginx'
-#    needs: [ terraform_apply ]
+    needs: [ terraform_apply ]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -91,39 +91,39 @@ jobs:
         cluster-name: ${{ secrets.CLUSTER_NAME }}
         subscription: ${{ secrets.SUBSCRIPTION }}
         
-    - name: Deploy to Kubernetes cluster
+    - name: Deploy Nginx
       run: |
         kubectl create namespace ingress-nginx 
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml --namespace=ingress-nginx       
 
-#  deploy_kafka:
-#    name: 'Deploy Kafka'
-#    needs: [ deploy_nginx ]
-#    runs-on: ubuntu-latest
-#    permissions:
-#      contents: read
-#      pages: write
-#      id-token: write
+  deploy_kafka:
+    name: 'Deploy Kafka'
+    needs: [ deploy_nginx ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
   
-#    steps:
-#    - name: Checkout
-#      uses: actions/checkout@v4.1.1
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
 
-#    - name: Azure Login
-#      uses: Azure/login@v2.0.0
-#      with:        
-#        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Azure Login
+      uses: Azure/login@v2.0.0
+      with:        
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-#    - name: Azure Kubernetes set context
-#      uses: Azure/aks-set-context@v3
-#      with:        
-#        resource-group: ${{ secrets.RESOURCE_GROUP }}
-#        cluster-name: ${{ secrets.CLUSTER_NAME }}
-#        subscription: ${{ secrets.SUBSCRIPTION }}        
+    - name: Azure Kubernetes set context
+      uses: Azure/aks-set-context@v3
+      with:        
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+        subscription: ${{ secrets.SUBSCRIPTION }}        
         
-#    - name: Deploy to Kubernetes cluster
-#      working-directory: ${{ env.ROOT_PATH_KUBERNETES }}
-#      run: |
-#        kubectl create namespace kafka \
-#        kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka \
-#        kubectl apply -f kafka.yaml -n kafka
+    - name: Deploy to Kubernetes cluster
+      working-directory: ${{ env.ROOT_PATH_KUBERNETES }}
+      run: |
+        kubectl create namespace kafka 
+        kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka 
+        kubectl apply -f kafka.yaml -n kafka
