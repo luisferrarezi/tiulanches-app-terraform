@@ -93,7 +93,7 @@ jobs:
         
     - name: Deploy to Kubernetes cluster
       run: |
-        kubectl create namespace ingress-nginx
+        kubectl create namespace ingress-nginx 
         kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml --namespace=ingress-nginx       
 
 #  deploy_kafka:
