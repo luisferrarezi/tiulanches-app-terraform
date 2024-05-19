@@ -38,6 +38,8 @@ Através do Terraform é criada a estrutura da seguinte forma:
 - Cria o Storage Account para ser usada pela function
 - Cria o Service Plan para definir que como a function será executada
 - Cria a estrutura onde a function é alocada
+- Faz deploy do Nginx no AKS
+- Faz deploy do Kafka no AKS
 
 ### Variáveis de Ambiente
 Existem variáveis de ambiente que são indispensáveis para que a estrutura seja corretamente criada:
@@ -49,3 +51,7 @@ Existem variáveis de ambiente que são indispensáveis para que a estrutura sej
 - SUBSCRIPTION_ID=<SUBSCRIPTION_ID> - Esta informação está no github criado no azure
 - TENANT_ID=<TENANT_ID> - Esta informação está no github criado no azure
 - TF_API_TOKEN=<TF_API_TOKEN> - Esta informação se encontra no https://app.terraform.io/ onde é necessário existir um token para que o git actions utilize os recursos da própria HashiCorp disponibiliza para criar a automação com o actions.
+- AZURE_CREDENTIALS=<AZURE_CREDENTIALS> - Credenciais necessárias do usuário github para que possa realizar o deploy
+- CLUSTER_NAME=<CLUSTER_NAME> - O nome do cluster que foi criado para o AKS
+- RESOURSE_GROUP=<RESOURSE_GROUP> - Resouce Group destinado na Azure para a aplicação
+- SUBSCRIPTION=<SUBSCRIPTION> - Subscription ao qual o AKS criado pertence
