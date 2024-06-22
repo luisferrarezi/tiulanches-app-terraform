@@ -55,3 +55,22 @@ Existem variáveis de ambiente que são indispensáveis para que a estrutura sej
 - CLUSTER_NAME=<CLUSTER_NAME> - O nome do cluster que foi criado para o AKS
 - RESOURSE_GROUP=<RESOURSE_GROUP> - Resouce Group destinado na Azure para a aplicação
 - SUBSCRIPTION=<SUBSCRIPTION> - Subscription ao qual o AKS criado pertence
+
+### Nginx
+Para subir o Nginx são necessários serem executados os seguintes comandos
+
+~~~Execute
+kubectl create namespace ingress-nginx 
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml --namespace=ingress-nginx       
+~~~
+
+### Kafka
+Para subir o Kafka são necessários serem executados os seguintes comandos dentro da pasta kubernetes
+
+~~~Execute
+kubectl create namespace kafka 
+kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka 
+kubectl apply -f kafka.yaml -n kafka
+~~~
+
+
